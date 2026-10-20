@@ -162,6 +162,12 @@ Back up plugin tables, service configuration, credentials and durable state. Nev
 
 See [validation](docs/VALIDATION.md), [operations](docs/OPERATIONS.md) and [development](docs/DEVELOPMENT.md). Development uses isolated volumes, synthetic servers and a fake router. Native screenshots depict development rather than live-router reachability.
 
+## Repository and release layout
+
+`plugin.json`, `src/`, `config/`, `database/`, `resources/` and `routes/` are at the repository root so the Pelican plugin hub can find the plugin manifest directly. `service/`, `packaging/`, `tests/` and `contracts/` contain service source, build tools, verification and developer documentation.
+
+The release builder packages the plugin runtime under `port-opener/` with its README, license and reviewed documentation. Service source, tests, build tools, development Compose configuration and unlisted local files are excluded from the plugin ZIP. Host-service and managed IPv4 packages are built separately. For a direct source installation, name the panel plugin folder `port-opener` to match the manifest ID; the release ZIP already uses that name.
+
 ## License and source publication
 
 Original project code and documentation use the [MIT license](LICENSE), copyright 2026 Icesory. See [third-party notices](THIRD_PARTY_NOTICES.md). For a fresh public repository, use the reviewed [file list](packaging/public-files.txt) and [publication guide](docs/PUBLICATION.md); do not copy private development history or runtime files. The two included screenshots show synthetic development data and illustrate navigation; wording may differ from the current release.

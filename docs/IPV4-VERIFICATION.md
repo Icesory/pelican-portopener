@@ -33,12 +33,12 @@ From the project directory on a Linux Docker host:
 sh packaging/verify_ipv4_pelican.sh
 ```
 
-This runner copies only plugin source into an ephemeral container, enables its private plugin copy and builds an empty SQLite database. Its Docker network is disabled. It does not read an existing panel database, production credentials or Wings configuration. `APP_ENV=local` is deliberate: Pelican disables plugin loading under `testing`.
+This runner builds the release from the root layout, extracts the actual plugin ZIP into an ephemeral container, enables that private copy and builds an empty SQLite database. Relocated tests are mounted read-only. Its Docker network is disabled. It does not read an existing panel database, production credentials or Wings configuration. `APP_ENV=local` is deliberate: Pelican disables plugin loading under `testing`.
 
 The smaller harness can run with an isolated Laravel vendor directory:
 
 ```sh
-php plugin/tests/ipv4_installation.php /path/to/laravel/vendor/autoload.php
+php tests/ipv4_installation.php /path/to/laravel/vendor/autoload.php
 python packaging/egg/test_packaging.py
 PYTHONPATH=service python -m unittest discover -s service/tests
 ```

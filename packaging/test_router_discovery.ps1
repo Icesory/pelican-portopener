@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-. "$PSScriptRoot/../plugin/port-opener/resources/helpers/Find-PortOpenerRouter.ps1"
+. "$PSScriptRoot/../resources/helpers/Find-PortOpenerRouter.ps1"
 $url = 'http://192.168.178.1:49000/igddesc.xml'
 $target = 'urn:schemas-upnp-org:device:InternetGatewayDevice:1'
 $reply = "HTTP/1.1 200 OK`r`nST: $target`r`nLOCATION: $url`r`n`r`n"

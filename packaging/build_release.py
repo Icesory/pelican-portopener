@@ -1,4 +1,4 @@
-"""Build releases exclusively from the reviewed public file list."""
+"""Build releases from the root-level plugin and reviewed public file list."""
 import json
 from pathlib import Path
 import tarfile
@@ -7,6 +7,8 @@ from build_ipv4_egg import build as build_ipv4_egg
 from public_export import Audit, public_files
 
 ROOT = Path(__file__).resolve().parents[1]
+PLUGIN_ROOT_FILES = {'plugin.json', 'LICENSE', 'README.md', 'THIRD_PARTY_NOTICES.md'}
+PLUGIN_DIRECTORIES = ('src/', 'config/', 'database/', 'resources/', 'routes/')
 
 
 def build():
@@ -15,26 +17,22 @@ def build():
     audit = Audit()
     if audit.check(ROOT, names)['findings']:
         raise ValueError('Public audit has findings; run packaging/public_export.py --check')
-    manifest = json.loads((ROOT / 'plugin/port-opener/plugin.json').read_text(encoding='utf-8'))
+    manifest = json.loads((ROOT / 'plugin.json').read_text(encoding='utf-8'))
     version = manifest['version']
     output = ROOT / 'dist'
     output.mkdir(exist_ok=True)
     docs = [name for name in names if name.startswith('docs/')]
-    prefix = 'plugin/port-opener/'
     with zipfile.ZipFile(output / f'port-opener-{version}.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name in names:
-            if not name.startswith(prefix) or name.startswith(prefix + 'tests/'):
+            if name not in PLUGIN_ROOT_FILES and not name.startswith(PLUGIN_DIRECTORIES):
                 continue
-            target = 'port-opener/' + name.removeprefix(prefix)
-            if name == prefix + 'plugin.json':
+            target = 'port-opener/' + name
+            if name == 'plugin.json':
                 clean = dict(manifest)
                 clean.pop('meta', None)
                 archive.writestr(target, json.dumps(clean, indent=2) + '\n')
-            elif name == prefix + 'README.md':
-                archive.write(ROOT / 'README.md', target)
             else:
                 archive.write(ROOT / name, target)
-        archive.write(ROOT / 'THIRD_PARTY_NOTICES.md', 'port-opener/THIRD_PARTY_NOTICES.md')
         for name in docs:
             archive.write(ROOT / name, 'port-opener/' + name)
     with tarfile.open(output / f'port-opener-service-{version}.tar.gz', 'w:gz') as archive:
