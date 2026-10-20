@@ -130,26 +130,6 @@ IPv6 uses finite 120-second pinholes renewed by their exact destination/port/pro
 
 Our FRITZ!Box accepts AddPinhole but denies read-back, including source-bound IPv6 requests. Those rules show **Requested (unverified)**. External IPv6 traffic has not been independently verified.
 
-## Upgrading from 0.3.x
-
-Migration 000009 converts existing valid, explicitly approved egg definitions into allocation protocol records. Mapping IDs and installation identity remain unchanged. Invalid or unmatched legacy definitions do not grant new access. Old egg records are retained for backup/history and no longer control forwarding.
-
-Existing server exposure/mode and IPv6 approvals are preserved. New servers/allocations are not automatically exposed. The old status-page URL redirects to the hub's Ports info tab. PortOpenerService's transport does not change, and existing paired services do not need re-pairing for this UI update.
-
-## Legacy local API
-
-Existing loopback API installations remain supported. Configure endpoint/token overrides in the node dialog's Advanced section, or retain the panel environment fallback:
-
-```dotenv
-PORT_OPENER_ENDPOINT=http://127.0.0.1:8787
-PORT_OPENER_TOKEN=<same private service token>
-PORT_OPENER_INSTALLATION_ID=<existing UUID>
-PORT_OPENER_NODE_ID=1
-PORT_OPENER_ENABLED=true
-```
-
-Do not expose the legacy API port to the Internet. Legacy test mode remains controlled on the service. The fresh-install helper refuses to overwrite existing UUID/state/credentials. Prefer paired outbound HTTPS for new nodes.
-
 ## Diagnostics and temporary debug mode
 
 Open the node's **Configure > Diagnostics** section. **Download diagnostics** exports a JSON support report with versions, numeric policy limits, cached connectivity/port status and recent service events. Addresses, URLs, server/node names, installation identities, credentials, environment files, raw requests and exception messages are excluded. Only root administrators can download reports or control debug mode. Nothing is uploaded to a third party automatically.
@@ -157,8 +137,6 @@ Open the node's **Configure > Diagnostics** section. **Download diagnostics** ex
 Choose **Enable debug (15 minutes)**, wait for the next service poll, reproduce the issue, then download the report. **Stop debug** requests an earlier stop. The service enforces its own deadline, including during a panel outage, and a monotonic deadline prevents a backwards clock adjustment from prolonging the current session. Status distinguishes a panel request from the service's last reported debug state.
 
 Normal events record changes, failures and recovery. Debug adds repeated per-port checks and successful report delivery. History is capped at 128 events and 64 KiB on disk, with private file permissions. Events also appear in the service console. If the service cannot report, the download contains cached/absent service data; local sanitized history remains beside its state file as `state.json.diagnostics.json`. Review the report before choosing to share it.
-
-Upgrade PortOpenerService to 0.6.0 or later for events/debug control. Existing paired services keep working with the new panel; an older service still permits a panel-only download and gives an update requirement for debug mode. For the managed Egg, use **Reinstall IPv4 service** to install the new bundle while retaining pairing and ownership state.
 
 ## Operations and cleanup
 
