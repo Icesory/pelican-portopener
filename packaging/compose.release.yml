@@ -1,0 +1,17 @@
+name: portopener-live
+services:
+  port-opener-service:
+    container_name: PortOpenerService
+    build: .
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./service.json:/config/service.json:ro
+      - service-state:/state
+    env_file: token.env
+    command: [python, /app/port_opener.py, --config, /config/service.json]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+volumes:
+  service-state:

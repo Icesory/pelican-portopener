@@ -1,0 +1,41 @@
+name: portopener-dev
+services:
+  panel:
+    image: ghcr.io/pelican/panel@sha256:9e2e83f2fd4094bb15661b308b996af284dae525fdba4dd58f98f65c586604ed
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18080:80"
+    volumes:
+      - panel-data:/pelican-data
+      - panel-logs:/var/www/html/storage/logs
+      - ./plugin:/pelican-data/plugins
+      - ./plugin:/var/www/html/plugins
+    environment:
+      XDG_DATA_HOME: /pelican-data
+      APP_URL: http://localhost:18080
+      APP_NAME: PortOpener Development
+      APP_ENV: local
+      APP_DEBUG: "false"
+      APP_INSTALLED: "true"
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /pelican-data/database/database.sqlite
+      CACHE_STORE: file
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: database
+      MAIL_MAILER: log
+      BEHIND_PROXY: "true"
+    env_file: .env.dev
+  port-opener-service:
+    build: ./service
+    restart: unless-stopped
+    volumes:
+      - ./runtime/service.json:/config/service.json:ro
+      - service-state:/state
+    env_file: .env.dev
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+volumes:
+  panel-data:
+  panel-logs:
+  service-state:

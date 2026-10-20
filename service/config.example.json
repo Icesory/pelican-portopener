@@ -1,0 +1,16 @@
+{
+  "installation_id": "11111111-1111-4111-8111-111111111111",
+  "node_id": 1,
+  "internal_address": "192.168.1.100",
+  "min_port": 50000,
+  "max_port": 55000,
+  "backend": "fake",
+  "dry_run": true,
+  "bind": "127.0.0.1",
+  "listen_port": 8787,
+  "state_file": "/var/lib/port-opener/state.json",
+  "lease_seconds": 3600,
+  "reconcile_seconds": 60,
+  "max_mappings": 256,
+  "router_description_url": "http://192.168.178.1:49000/igddesc.xml"
+}

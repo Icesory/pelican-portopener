@@ -1,0 +1,17 @@
+{
+  "id": "port-opener",
+  "name": "Port Opener",
+  "author": "Icesory",
+  "version": "0.6.4",
+  "description": "Approved per-node UPnP exposure with securely paired PortOpenerService connections.",
+  "category": "plugin",
+  "namespace": "PortOpener",
+  "class": "PortOpenerPlugin",
+  "panels": [
+    "admin",
+    "server"
+  ],
+  "panel_version": "1.0.0-rc.1",
+  "api_version": 1,
+  "composer_packages": null
+}

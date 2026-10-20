@@ -1,0 +1,28 @@
+[Unit]
+Description=Pelican PortOpener host PortOpenerService
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=portopener
+Group=portopener
+WorkingDirectory=/opt/port-opener
+EnvironmentFile=/etc/port-opener/token.env
+ExecStart=/usr/bin/python3 /opt/port-opener/port_opener.py --config /etc/port-opener/service.json
+Restart=on-failure
+RestartSec=5
+StateDirectory=port-opener
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+LockPersonality=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
