@@ -27,9 +27,9 @@ docs/PUBLICATION.md
 docs/VALIDATION.md
 docs/admin-overview.png
 docs/router-discovery.png
-packaging/bootstrap_dev.php
 packaging/build_ipv4_egg.py
 packaging/build_release.py
+packaging/check_hub_submission.py
 packaging/compose.outbound.yml
 packaging/compose.release.yml
 packaging/configure_new_install.py
@@ -41,11 +41,11 @@ packaging/port-opener.service
 packaging/public-files.txt
 packaging/public_export.py
 packaging/setup_dev.py
+packaging/test_hub_submission.py
 packaging/test_public_export.py
 packaging/test_repository_layout.py
 packaging/test_router_discovery.ps1
 packaging/test_router_discovery.py
-packaging/update_dev_manifest.php
 packaging/verify_documented_release.py
 packaging/verify_ipv4_pelican.sh
 plugin.json

@@ -16,7 +16,7 @@ docker run --rm -i --network none --entrypoint sh \
     -e QUEUE_CONNECTION=database -e CACHE_STORE=array -e SESSION_DRIVER=array \
     ghcr.io/pelican/panel@sha256:9e2e83f2fd4094bb15661b308b996af284dae525fdba4dd58f98f65c586604ed -s <<'VERIFY'
 set -eu
-php <<'PHP'
+php <<'PHP' > /tmp/port-opener-manifest.json
 <?php
 $archive = new ZipArchive();
 if ($archive->open('/tmp/port-opener-release.zip') !== true || !$archive->extractTo('/var/www/html/plugins')) {
@@ -26,8 +26,9 @@ $archive->close();
 $path='/var/www/html/plugins/port-opener/plugin.json';
 $manifest=json_decode(file_get_contents($path),true,flags:JSON_THROW_ON_ERROR);
 $manifest['meta']=['status'=>'enabled','status_message'=>null];
-if (file_put_contents($path,json_encode($manifest,JSON_THROW_ON_ERROR))===false) exit(1);
+echo json_encode($manifest,JSON_THROW_ON_ERROR);
 PHP
+cp /tmp/port-opener-manifest.json /var/www/html/plugins/port-opener/plugin.json
 touch /tmp/portopener-verification.sqlite
 php /source-tests/ipv4_pelican.php
 VERIFY
