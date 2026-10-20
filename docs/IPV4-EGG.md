@@ -75,7 +75,7 @@ The isolated harness uses Laravel/SQLite with simulated Pelican creation/import 
 Run the PHP harness with an isolated Laravel 12 vendor autoloader (never against production):
 
 ```text
-php plugin/tests/ipv4_installation.php /path/to/laravel/vendor/autoload.php
+php tests/ipv4_installation.php /path/to/laravel/vendor/autoload.php
 python packaging/egg/test_packaging.py
 sh packaging/verify_ipv4_pelican.sh
 ```

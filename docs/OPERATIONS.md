@@ -18,7 +18,7 @@ Pausing disables desired exposure while preserving the service connection. Activ
 
 ## Development
 
-Compose project portopener-dev uses separate SQLite/panel/service volumes and a fake router. Stop with docker compose stop; retain volumes when restarting. Environment files and runtime credentials are ignored by Git. Native UI tests are in plugin/tests/admin_redesign.php and must run only in the isolated development panel.
+Compose project portopener-dev uses separate SQLite/panel/service volumes and a fake router. Stop with docker compose stop; retain volumes when restarting. Environment files and runtime credentials are ignored by Git. Native UI tests are in tests/admin_redesign.php and must run only in the isolated development panel.
 
 ## Troubleshooting and support
 

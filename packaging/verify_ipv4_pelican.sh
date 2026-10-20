@@ -1,9 +1,12 @@
 #!/bin/sh
-# Real Pelican services with an empty, disposable database and simulated Wings HTTP.
+# Verify the actual deployable ZIP with a fresh database and simulated Wings HTTP.
 set -eu
 project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+python3 "$project_dir/packaging/build_release.py"
+version=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$project_dir/plugin.json")
 docker run --rm -i --network none --entrypoint sh \
-    -v "$project_dir/plugin:/source:ro" \
+    -v "$project_dir/dist/port-opener-$version.zip:/tmp/port-opener-release.zip:ro" \
+    -v "$project_dir/tests:/source-tests:ro" \
     --tmpfs /var/www/html/plugins:rw,nosuid,mode=1777 \
     -w /var/www/html \
     -e APP_NAME='PortOpener Verification' -e APP_ENV=local \
@@ -13,18 +16,18 @@ docker run --rm -i --network none --entrypoint sh \
     -e QUEUE_CONNECTION=database -e CACHE_STORE=array -e SESSION_DRIVER=array \
     ghcr.io/pelican/panel@sha256:9e2e83f2fd4094bb15661b308b996af284dae525fdba4dd58f98f65c586604ed -s <<'VERIFY'
 set -eu
-cp -R /source/port-opener /var/www/html/plugins/port-opener
-mkdir /var/www/html/plugins/tests
-cp /source/tests/ipv4_pelican.php /var/www/html/plugins/tests/
-cp /source/tests/ports_grouping.php /var/www/html/plugins/tests/
-cp /source/tests/diagnostics.php /var/www/html/plugins/tests/
 php <<'PHP'
 <?php
+$archive = new ZipArchive();
+if ($archive->open('/tmp/port-opener-release.zip') !== true || !$archive->extractTo('/var/www/html/plugins')) {
+    throw new RuntimeException('Cannot extract the built plugin release.');
+}
+$archive->close();
 $path='/var/www/html/plugins/port-opener/plugin.json';
 $manifest=json_decode(file_get_contents($path),true,flags:JSON_THROW_ON_ERROR);
 $manifest['meta']=['status'=>'enabled','status_message'=>null];
 if (file_put_contents($path,json_encode($manifest,JSON_THROW_ON_ERROR))===false) exit(1);
 PHP
 touch /tmp/portopener-verification.sqlite
-php plugins/tests/ipv4_pelican.php
+php /source-tests/ipv4_pelican.php
 VERIFY
