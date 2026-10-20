@@ -23,10 +23,11 @@ Do not share that file or `.env.dev`. The development panel uses a pinned Pelica
 
 ## Source and checks
 
-- `plugin/port-opener/`: installable PHP plugin, migrations, Filament components and views.
+- The repository root: installable PHP plugin manifest, `src/`, `config/`, `database/`, `resources/` and `routes/`.
 - `service/`: Python service, router backends, diagnostics and unit tests.
 - `contracts/`: shared API contract.
 - `packaging/`: development setup, builders, guarded verification and public export tools.
+- `tests/`: PHP plugin/resolver/router tests, isolated Pelican harnesses and manual integration probes.
 - `docs/`: installation, operations, validation and publication guidance.
 
 Run from the repository root:
@@ -34,11 +35,11 @@ Run from the repository root:
 ```sh
 PYTHONPATH=service python3 -m unittest discover -s service/tests
 python3 packaging/egg/test_packaging.py
-python3 -m unittest discover -s packaging -p 'test_public_export.py'
+python3 -m unittest discover -s packaging -p 'test_*.py'
 sh packaging/verify_ipv4_pelican.sh
 ```
 
-The Pelican verification runner creates a disposable database in a container with networking disabled. Existing panel credentials and databases are not mounted. Other PHP fixtures require the isolated development app and must never run against a production panel. Linux is required for service tests that verify process locks and private POSIX permissions.
+The Pelican verification runner builds the plugin ZIP, extracts that deployable artifact and creates a disposable database in a container with networking disabled. Existing panel credentials and databases are not mounted. Other PHP fixtures require the isolated development app and must never run against a production panel. Linux is required for service tests that verify process locks and private POSIX permissions.
 
 Global IPv6 values in synthetic tests are fixtures rather than operator addresses. Some tests need an address that Python classifies as global; they do not contact that address.
 
@@ -56,3 +57,9 @@ See [PUBLICATION.md](PUBLICATION.md) for the fresh repository export. Generated 
 ## Service naming upgrade
 
 The service source, development build context and test suite live under `service/`. Host archives use `port-opener-service-VERSION.tar.gz`, and examples use `service.json`. When updating an existing host unit or Compose configuration, retain the current configuration contents, credentials, installation identity and ownership state; update the launch path to the existing configuration file as needed. No live files are moved by the source rename. Existing production Compose state-volume names are unchanged.
+
+## Plugin root layout
+
+The hub-facing manifest is `plugin.json` at the repository root. Runtime directories are siblings of that file, while Python source stays in `service/` and PHP checks live in `tests/`. The development panel bind-mounts this root at both of its `plugins/port-opener` paths. Root README and license files are the canonical documentation and attribution; there are no nested duplicates.
+
+The plugin ZIP contains only the reviewed runtime directories, manifest, root README/license/notices and documentation. Development files and unlisted local files are excluded. Layout regression tests build in a temporary source copy with unlisted private-file probes, and the Pelican runner exercises the actual built ZIP. The existing versioned service bundle remains byte-identical.

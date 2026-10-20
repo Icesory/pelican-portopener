@@ -23,5 +23,5 @@ bootstrap.json
 *.tar
 *.tar.gz
 *.zip
-!plugin/port-opener/resources/releases/*.zip
+!resources/releases/*.zip
 backups/

@@ -8,8 +8,8 @@ services:
     volumes:
       - panel-data:/pelican-data
       - panel-logs:/var/www/html/storage/logs
-      - ./plugin:/pelican-data/plugins
-      - ./plugin:/var/www/html/plugins
+      - .:/pelican-data/plugins/port-opener
+      - .:/var/www/html/plugins/port-opener
     environment:
       XDG_DATA_HOME: /pelican-data
       APP_URL: http://localhost:18080

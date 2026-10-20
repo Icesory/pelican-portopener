@@ -9,7 +9,8 @@ The authoritative file-by-file list is [packaging/public-files.txt](../packaging
 | Area | Public export |
 | --- | --- |
 | `LICENSE`, `THIRD_PARTY_NOTICES.md`, `README.md`, Git ignore/attributes | Included |
-| `service/`, `contracts/`, `plugin/` | Reviewed source/tests and required bundled release assets |
+| Root `plugin.json`, `src/`, `config/`, `database/`, `resources/`, `routes/` | Installable plugin, including its current bundled service release |
+| `service/`, `contracts/`, `tests/` | Reviewed service source, developer documentation and verification |
 | `packaging/` | Only the explicitly listed builders, examples and guarded development/test tools |
 | `tests/integration/` | Fake flow and parameterized manual bridge probe; the old personal live probe is excluded |
 | `docs/` | Listed generic guides and two visually reviewed synthetic screenshots |
@@ -17,7 +18,7 @@ The authoritative file-by-file list is [packaging/public-files.txt](../packaging
 | Old upload TAR, local deployment/debug scripts, historical live-service/recovery notes, other screenshots | Excluded |
 | `runtime/`, `dev-data/`, `dist/`, dependencies | Excluded; release assets are built separately |
 
-Older bundled service ZIPs remain for existing versioned download URLs. They were inspected as archives as well as files. Their bytes remain unchanged. New service ZIPs include `LICENSE`; the top-level repository/plugin license also applies to original code in historical bundles.
+The current service ZIP referenced by `resources/releases/manifest.json` is bundled with the plugin and includes `LICENSE`. Published service ZIP bytes remain immutable. The public file list includes only release assets retained in the working tree; it does not restore removed older releases.
 
 ## Build, audit and export
 
@@ -48,7 +49,7 @@ Tracked source and nested release assets were inspected for key/token signatures
 
 The final export was additionally compared against known private deployment identities. No production credentials were retrieved for this audit. The final machine-readable result is kept privately with the export. No claim is made about old Git history, unselected local files or secret formats outside the checks. Keep the existing checkout and its history private.
 
-The 156-file public set includes 204 inspected entries when bundled ZIP contents are counted. Two screenshots received visual review. The 0.6.4 verification on a separate Linux server directory passed 11 export-boundary tests, seven Egg packaging tests, 96 service tests and 105 fresh Pelican integration checks. Documentation assets, fresh helper setup/overwrite refusal and both Compose files also passed. Windows and Linux reproduced the same versioned service ZIP. A network-isolated container also verified the renamed Docker default startup, service user, service.json mount and authenticated fake-backend health/status. No live installation was changed.
+The earlier service-naming audit covered 156 files and 204 entries, including the historical bundles retained at that time. The current root layout uses the explicit file list and current retained bundle; its checks are described in DEVELOPMENT.md and VALIDATION.md. Two screenshots received visual review. The 0.6.4 verification on a separate Linux server directory passed 11 export-boundary tests, seven Egg packaging tests, 96 service tests and 105 fresh Pelican integration checks. Documentation assets, fresh helper setup/overwrite refusal and both Compose files also passed. Windows and Linux reproduced the same versioned service ZIP. A network-isolated container also verified the renamed Docker default startup, service user, service.json mount and authenticated fake-backend health/status. No live installation was changed.
 
 ## License and first push
 

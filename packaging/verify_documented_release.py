@@ -3,7 +3,7 @@ import pathlib,re,subprocess,sys,tarfile,tempfile,zipfile,json
 root=pathlib.Path(__file__).resolve().parents[1]
 readme=(root/'README.md').read_text(encoding='utf-8')
 assets=re.findall(r'!\[[^]]*\]\(([^)]+)\)',readme)
-version=json.loads((root/'plugin/port-opener/plugin.json').read_text())['version']
+version=json.loads((root/'plugin.json').read_text())['version']
 assert len(assets)>=2
 assert all((root/path).is_file() for path in assets)
 with zipfile.ZipFile(root/f'dist/port-opener-{version}.zip') as archive:

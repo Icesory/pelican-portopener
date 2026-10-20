@@ -10,7 +10,7 @@ root = Path(__file__).resolve().parents[1]
 
 
 def build(download_url=''):
-    version = json.loads((root / 'plugin/port-opener/plugin.json').read_text())['version']
+    version = json.loads((root / 'plugin.json').read_text())['version']
     output = root / 'dist'
     output.mkdir(exist_ok=True)
     filename = f'port-opener-service-ipv4-{version}.zip'
@@ -54,13 +54,13 @@ def build(download_url=''):
         ])
     egg_path = output / 'egg-port-opener-ipv4.json'
     egg_path.write_text(json.dumps(egg, indent=4) + '\n', encoding='utf-8', newline='\n')
-    bundled = root / 'plugin/port-opener/resources/releases'
+    bundled = root / 'resources/releases'
     bundled.mkdir(exist_ok=True)
     if (bundled / filename).exists() and (bundled / filename).read_bytes() != archive_path.read_bytes():
         raise ValueError('Versioned service bundle changed. Bump the version instead of replacing published bytes.')
     shutil.copyfile(archive_path, bundled / filename)
     shutil.copyfile(egg_path, bundled / egg_path.name)
-    shutil.copyfile(root / 'service/diagnostics-schema.json', root / 'plugin/port-opener/resources/diagnostics-schema.json')
+    shutil.copyfile(root / 'service/diagnostics-schema.json', root / 'resources/diagnostics-schema.json')
     (bundled / 'manifest.json').write_text(json.dumps(dict(version=version, filename=filename, sha256=checksum), indent=2) + '\n', encoding='utf-8', newline='\n')
     print(f'Built {archive_path.name}, checksum, and {egg_path.name}')
     print('Download URL: ' + (download_url or 'Automatic for managed installs; standalone export needs an HTTPS URL'))
