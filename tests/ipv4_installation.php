@@ -1,12 +1,12 @@
 <?php
 /** Isolated Laravel/SQLite tests. Pelican creation/import and Wings are simulated; no live node is touched.
- * Run: php plugin/tests/ipv4_installation.php /path/to/laravel/vendor/autoload.php
+ * Run: php tests/ipv4_installation.php /path/to/laravel/vendor/autoload.php
  */
 namespace {
-    require $argv[1] ?? __DIR__.'/../../runtime/ipv4-tests/vendor/autoload.php';
+    require $argv[1] ?? __DIR__.'/../runtime/ipv4-tests/vendor/autoload.php';
     spl_autoload_register(function ($class) {
         if (str_starts_with($class, 'PortOpener\\')) {
-            $path = __DIR__.'/../port-opener/src/'.str_replace('\\', '/', substr($class, 11)).'.php';
+            $path = __DIR__.'/../src/'.str_replace('\\', '/', substr($class, 11)).'.php';
             if (is_file($path)) require $path;
         }
     });
@@ -79,7 +79,7 @@ namespace {
     use PortOpener\Services\{Ipv4Installer, Ipv4Release, Ipv4Wings};
     use App\Models\{User, Server};
 
-    $app = new Illuminate\Foundation\Application(__DIR__.'/../../runtime/ipv4-tests');
+    $app = new Illuminate\Foundation\Application(__DIR__.'/../runtime/ipv4-tests');
     $app->instance('config', new Illuminate\Config\Repository([
         'app' => ['url' => 'https://panel.example.com', 'key' => 'test'],
         'queue' => ['default' => 'database'], 'cache' => ['default' => 'array', 'stores' => ['array' => ['driver' => 'array']]],
@@ -132,7 +132,7 @@ namespace {
             else { $t->string('token_hash')->unique(); $t->timestamp('revoked_at')->nullable(); $t->timestamp('renewed_at')->nullable(); }
         });
     }
-    (require __DIR__.'/../port-opener/database/migrations/2026_10_20_000010_managed_ipv4_installations.php')->up();
+    (require __DIR__.'/../database/migrations/2026_10_20_000010_managed_ipv4_installations.php')->up();
 
     $wings = new class extends Ipv4Wings {
         public string $currentState = 'offline'; public array $data = []; public int $bootstraps = 0; public int $reinstalls = 0;

@@ -5,7 +5,7 @@ import socket
 import unittest
 from unittest.mock import patch
 
-path = Path(__file__).resolve().parents[1]/'plugin/port-opener/resources/helpers/find_portopener_router.py'
+path = Path(__file__).resolve().parents[1]/'resources/helpers/find_portopener_router.py'
 spec = importlib.util.spec_from_file_location('router_discovery', path)
 discovery = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(discovery)
