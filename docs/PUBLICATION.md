@@ -27,6 +27,7 @@ From the project root, using Python 3.11+:
 ```sh
 python3 packaging/build_release.py
 python3 packaging/public_export.py --check
+python3 packaging/check_hub_submission.py
 python3 packaging/public_export.py --output runtime/public-repository
 ```
 
@@ -50,6 +51,12 @@ Tracked source and nested release assets were inspected for key/token signatures
 The final export was additionally compared against known private deployment identities. No production credentials were retrieved for this audit. The final machine-readable result is kept privately with the export. No claim is made about old Git history, unselected local files or secret formats outside the checks. Keep the existing checkout and its history private.
 
 The earlier service-naming audit covered 156 files and 204 entries, including the historical bundles retained at that time. The current root layout uses the explicit file list and current retained bundle; its checks are described in DEVELOPMENT.md and VALIDATION.md. Two screenshots received visual review. The 0.6.4 verification on a separate Linux server directory passed 11 export-boundary tests, seven Egg packaging tests, 96 service tests and 105 fresh Pelican integration checks. Documentation assets, fresh helper setup/overwrite refusal and both Compose files also passed. Windows and Linux reproduced the same versioned service ZIP. A network-isolated container also verified the renamed Docker default startup, service user, service.json mount and authenticated fake-backend health/status. No live installation was changed.
+
+## Hub submission checks
+
+The Hub can inspect PHP outside the plugin runtime directories. The full reviewed source must therefore pass `python3 packaging/check_hub_submission.py`, even though the installable ZIP excludes development files. This preflight checks the native file-write calls reported by the Hub and common native write/process operations; it does not reproduce the complete Hub validator or guarantee approval. Release builds stop when the check finds a call. Check the final ZIP separately with `python3 packaging/check_hub_submission.py --zip dist/port-opener-0.6.4.zip`.
+
+Unused development PHP scripts that wrote files were removed. Development accounts use Pelican's built-in user command, and test failures use console output with an explicit failure exit. No banned operation is renamed or hidden behind a different PHP call. Git archive exclusions additionally keep development-only directories out of deployment source archives; a source-cloning submission still sees the reviewed, checked development PHP.
 
 ## License and first push
 

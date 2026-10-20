@@ -143,6 +143,6 @@ try {
     $check($send('GET', $download, [], null, false)->getStatusCode() === 400, 'download route rejects plain HTTP');
     echo "$checks real Pelican IPv4 integration checks passed (Wings HTTP simulated).\n";
 } catch (Throwable $exception) {
-    fwrite(STDERR, get_class($exception).': '.$exception->getMessage().PHP_EOL.$exception->getTraceAsString().PHP_EOL);
+    echo get_class($exception).': '.$exception->getMessage().PHP_EOL.$exception->getTraceAsString().PHP_EOL;
     exit(1);
 }

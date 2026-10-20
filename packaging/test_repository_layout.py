@@ -1,8 +1,10 @@
 """Verify deployment artifacts from an isolated copy of the root plugin layout."""
 import hashlib
+import io
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import tarfile
 import tempfile
 import unittest
@@ -85,6 +87,43 @@ class RepositoryLayoutTests(unittest.TestCase):
             data = archive.read('port-opener/resources/releases/' + release['filename'])
             self.assertEqual(hashlib.sha256(data).hexdigest(), release['sha256'])
             self.assertEqual(data, (ROOT / 'resources/releases' / release['filename']).read_bytes())
+
+    def test_release_build_refuses_a_blocked_call_in_development_php(self):
+        fixture = self.fixture / 'tests/ipv4_pelican.php'
+        original = fixture.read_bytes()
+        try:
+            fixture.write_bytes(b"<?php fwrite(STDERR, 'fixture failure');")
+            with patch.object(build_release, 'ROOT', self.fixture):
+                with self.assertRaisesRegex(ValueError, 'Blocked native PHP calls'):
+                    build_release.build()
+        finally:
+            fixture.write_bytes(original)
+
+    def test_git_archive_excludes_development_and_keeps_root_manifest(self):
+        with tempfile.TemporaryDirectory(prefix='portopener-git-archive-') as temp:
+            source = Path(temp)
+            names = public_files(ROOT)
+            for name in names:
+                target = source / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(ROOT / name, target)
+            def git(*args):
+                return subprocess.run(['git', '-C', str(source), *args], check=True,
+                                      capture_output=True).stdout
+            git('init', '--quiet')
+            git('add', '--', *names)
+            tree = git('write-tree').decode().strip()
+            with zipfile.ZipFile(io.BytesIO(git('archive', '--format=zip', tree))) as archive:
+                exported = archive.namelist()
+                self.assertIn('plugin.json', exported)
+                self.assertIn('src/PortOpenerPlugin.php', exported)
+                self.assertIn('resources/releases/manifest.json', exported)
+                self.assertIn('resources/releases/port-opener-service-ipv4-' + self.version + '.zip', exported)
+                self.assertIn('LICENSE', exported)
+                self.assertIn('docs/admin-overview.png', exported)
+                self.assertFalse(any(name.startswith(('packaging/', 'tests/', 'service/', 'contracts/')) for name in exported))
+                self.assertNotIn('compose.yml', exported)
+                self.assertNotIn('meta', json.loads(archive.read('plugin.json')))
 
     def test_host_archive_remains_independent_of_the_plugin_layout(self):
         with tarfile.open(self.host_path) as archive:

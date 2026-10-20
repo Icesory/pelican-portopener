@@ -13,13 +13,15 @@ The panel is bound to `127.0.0.1:18080`. For a remote development host, forward 
 ssh -N -L 127.0.0.1:18080:127.0.0.1:18080 developer@development-host.example.com
 ```
 
-Open http://localhost:18080. Synthetic account passwords are generated at setup and kept privately in the container at `/pelican-data/dev-login.txt`:
+Open http://localhost:18080. Create development accounts with Pelican's built-in interactive command; choose an administrator named `dev-admin` for the legacy admin UI checks:
 
 ```sh
-docker compose exec panel cat /pelican-data/dev-login.txt
+docker compose exec panel php artisan p:user:make
 ```
 
-Do not share that file or `.env.dev`. The development panel uses a pinned Pelican image, a separate SQLite database, synthetic servers and a fake router. No live Wings node should be connected. The service has no published host API port. The development Compose file is not a production deployment configuration.
+For the legacy fixtures, also create non-administrator users named `dev-owner` and `dev-other` with synthetic addresses. Enter passwords interactively rather than putting them in command arguments or files. The disposable integration runner creates its own accounts. See [Pelican's user command documentation](https://pelican.dev/docs/panel/advanced/artisan/).
+
+Do not share `.env.dev`. The development panel uses a pinned Pelican image, a separate SQLite database, synthetic servers and a fake router. No live Wings node should be connected. The service has no published host API port. The development Compose file is not a production deployment configuration.
 
 ## Source and checks
 
@@ -48,6 +50,7 @@ Global IPv6 values in synthetic tests are fixtures rather than operator addresse
 ```sh
 python3 packaging/build_release.py
 python3 packaging/public_export.py --check
+python3 packaging/check_hub_submission.py
 ```
 
 Builders use the explicit [public file list](../packaging/public-files.txt). Unlisted files are not packaged. Review new paths and image pixels before adding them. Bump the plugin version whenever service bundle bytes change; published versioned bundles must remain immutable.
@@ -63,3 +66,5 @@ The service source, development build context and test suite live under `service
 The hub-facing manifest is `plugin.json` at the repository root. Runtime directories are siblings of that file, while Python source stays in `service/` and PHP checks live in `tests/`. The development panel bind-mounts this root at both of its `plugins/port-opener` paths. Root README and license files are the canonical documentation and attribution; there are no nested duplicates.
 
 The plugin ZIP contains only the reviewed runtime directories, manifest, root README/license/notices and documentation. Development files and unlisted local files are excluded. Layout regression tests build in a temporary source copy with unlisted private-file probes, and the Pelican runner exercises the actual built ZIP. The existing versioned service bundle remains byte-identical.
+
+Source clones retain development tools and tests. Git archives use `.gitattributes` export exclusions to omit `packaging/`, `tests/`, `service/`, `contracts/` and development Compose/configuration files, while keeping root `plugin.json` and bundled service resources. Clone the repository for development; an exported deployment archive is not the development checkout.

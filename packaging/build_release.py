@@ -5,6 +5,7 @@ import tarfile
 import zipfile
 from build_ipv4_egg import build as build_ipv4_egg
 from public_export import Audit, public_files
+from check_hub_submission import check_repository
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ROOT_FILES = {'plugin.json', 'LICENSE', 'README.md', 'THIRD_PARTY_NOTICES.md'}
@@ -12,6 +13,8 @@ PLUGIN_DIRECTORIES = ('src/', 'config/', 'database/', 'resources/', 'routes/')
 
 
 def build():
+    if check_repository(ROOT):
+        raise ValueError('Blocked native PHP calls; run packaging/check_hub_submission.py')
     build_ipv4_egg()
     names = public_files(ROOT)
     audit = Audit()
