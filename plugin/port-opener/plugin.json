@@ -13,5 +13,6 @@
   ],
   "panel_version": "1.0.0-rc.1",
   "api_version": 1,
-  "composer_packages": null
+  "composer_packages": null,
+  "update_url": "https://hub.pelican.dev/plugins/port-opener/update.json"
 }
